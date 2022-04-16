@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="لوحة التحكم الخاصة بموقع بلدية أولاد جلال">
+    <meta name="keywords" content="APC OULED DJELLAL, OULED DJELLAL, أولاد جلال, اولاد جلال, commune ouled djellal, assemblée populaire communale, المجلس الشعبي البلدي">
+    <meta name="author" content="absosm">
+
+    <title>بلدية أولاد جلال | لوحة التحكم</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://apcouleddjellal.dz/css/bootstrap.min.css" rel="stylesheet"> 
+
+    <!-- Animation CSS -->
+    <link href="https://apcouleddjellal.dz/css/animate.css" rel="stylesheet">
+    <link href="https://apcouleddjellal.dz/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="https://apcouleddjellal.dz/css/style.css?v0.0.0.2" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/9.6.10/firebase-app-compat.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/9.6.10/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/9.6.10/firebase-database-compat.js"></script>
+    <script defer src="/__/firebase/9.6.10/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/9.6.10/firebase-functions-compat.js"></script>
+    <script defer src="/__/firebase/9.6.10/firebase-messaging-compat.js"></script>
+    <script defer src="/__/firebase/9.6.10/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/9.6.10/firebase-analytics-compat.js"></script>
+    <script defer src="/__/firebase/9.6.10/firebase-remote-config-compat.js"></script>
+    <script defer src="/__/firebase/9.6.10/firebase-performance-compat.js"></script>
+    <!-- 
+        initialize the SDK after all desired features are loaded, set useEmulator to false
+        to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+    <!-- <script defer src="/__/firebase/init.js"></script> -->
+</head>
+<body class="gray-bg">
+
+      <div class="fullbox-loading sk-loading">
+          <div class="sk-spinner sk-spinner-wave">
+              <div class="sk-rect1"></div>
+              <div class="sk-rect2"></div>
+              <div class="sk-rect3"></div>
+              <div class="sk-rect4"></div>
+              <div class="sk-rect5"></div>
+          </div>
+      </div>
+
+      <button id="logout" class="btn btn-primary block m-b">logout</button>
+
+  </div>
+
+
+  
+
+
+
+
+<!-- Mainly scripts -->
+<script src="https://apcouleddjellal.dz/js/jquery-3.1.1.min.js"></script>
+<script src="https://apcouleddjellal.dz/js/popper.min.js"></script>
+<script src="https://apcouleddjellal.dz/js/bootstrap.js"></script>
+<script src="https://apcouleddjellal.dz/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="https://apcouleddjellal.dz/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="https://apcouleddjellal.dz/js/inspinia.js"></script>
+<script src="https://apcouleddjellal.dz/js/plugins/pace/pace.min.js"></script>
+<script src="https://apcouleddjellal.dz/js/plugins/wow/wow.min.js"></script>
+
+<script type="module">
+
+$(document).ready(function () {
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+
+      const displayName = user.displayName;
+      const email = user.email;
+      const photoURL = user.photoURL;
+      const emailVerified = user.emailVerified;
+
+      console.log('display name: '+ displayName);
+
+      user.providerData.forEach((profile) => {
+        console.log("Sign-in provider: " + profile.providerId);
+        console.log("  Provider-specific UID: " + profile.uid);
+        console.log("  Name: " + profile.displayName);
+        console.log("  Email: " + profile.email);
+        console.log("  Photo URL: " + profile.photoURL);
+      });
+
+      $('.fullbox-loading').remove('.sk-loading');
+      
+    } else {
+      // User is signed out
+      // ...
+      window.location.href = './login.html';
+    }
+  });
+
+});
+
+$('#logout').click(function () {
+
+  firebase.auth().signOut().then(() => {
+    // Sign-out successful.
+    window.location.href = './login.html';
+  }).catch((error) => {
+    // An error happened.
+    console.log(error);
+  });
+
+});
+
+
+</script>
+    
+</body>
+</html>

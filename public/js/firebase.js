@@ -1,81 +1,78 @@
-const phoneNumberField = document.getElementById('phoneNumber');
-const codeField = document.getElementById('code');
-const signInWithPhoneButton = document.getElementById('signInWithPhone');
-const getCodeButton = document.getElementById('getCode');
-
-const auth = firebase.auth();
-
-window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
-
-recaptchaVerifier.render().then(widgetId => {
-  window.recaptchaWidgetId = widgetId;
-})
-
-const sendVerificationCode = () => {
-  const phoneNumber = phoneNumberField.value;
-  const appVerifier = window.recaptchaVerifier;
-
-  auth.signInWithPhoneNumber(phoneNumber, appVerifier)
-  .then(confirmationResult => {
-    const sentCodeId = confirmationResult.verificationId;
-    signInWithPhoneButton.addEventListener('click', () => signInWithPhone(sentCodeId));
-  })
+function add_menu_item(icon, title, href) {
+  const li = document.createElement('li');
+  const a =  document.createElement('a');
+  a.href = href;
+  const i = document.createElement('i');
+  i.classList.add('fa', icon);
+  a.appendChild(i);
+  a.append(title);
+  li.appendChild(a);
+  $('#side-menu').append(li);
 }
 
-const signInWithPhone = sentCodeId => {
-  const code = codeField.value;
-  const credential = firebase.auth.PhoneAuthProvider.credential(sentCodeId, code);
-  auth.signInWithCredential(credential)
-  .then(() => {
-    window.location.assign('./profile');
-  })
-  .catch(error => {
-    console.error(error);
-  })
+function add_menu(icon, title, href) {
+  const li = document.createElement('li');
+  const a =  document.createElement('a');
+  a.href = href;
+  const i = document.createElement('i');
+  i.classList.add('fa', icon);
+  a.appendChild(i);
+  a.append(title);
+  li.appendChild(a);
+  $('#side-menu').append(li);
 }
 
 
+function init_side_menu() {
 
-function signUpWithEmailPassword() {
+  add_menu_item('fa-files-o', 'new menu item', '#');
+}
 
-  var email = $('#username').val();
-  var password = $('#password').val();
-  // [START auth_signup_password]
-  firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      // Signed in 
-      var user = userCredential.user;
+$(document).ready(function () {
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+
+      const displayName = user.displayName;
+      const email = user.email;
+      const photoURL = user.photoURL;
+      const emailVerified = user.emailVerified;
+
+      $('#photo_url').attr('src', photoURL);
+      $('#display_name').html(displayName);
+
+      user.providerData.forEach((profile) => {
+        console.log("Sign-in provider: " + profile.providerId);
+        console.log("  Provider-specific UID: " + profile.uid);
+        console.log("  Name: " + profile.displayName);
+        console.log("  Email: " + profile.email);
+        console.log("  Photo URL: " + profile.photoURL);
+      });
+
+      init_side_menu()
+
+      $('.fullbox-loading').remove('.sk-loading');
+      
+    } else {
+      // User is signed out
       // ...
-      window.location.href = '/home.html';
-
-    })
-    .catch((error) => {
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // ..
-      console.log(error);
-    });
-  // [END auth_signup_password]
-}
-
-
-
-
-
-
-
-getCodeButton.addEventListener('click', sendVerificationCode);
-
-$('#login').on('submit', function (e) {
-
-  if (!e.isDefaultPrevented()) {
-
-      e.preventDefault();
-
-      signInWithPhone();
-  }
+      window.location.href = './login.html';
+    }
+  });
 
 });
 
+$('.logout').click(function () {
 
+  firebase.auth().signOut().then(() => {
+    // Sign-out successful.
+    window.location.href = './login.html';
+  }).catch((error) => {
+    // An error happened.
+    console.log(error);
 
+  });
+
+});

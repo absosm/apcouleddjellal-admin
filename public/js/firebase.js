@@ -1,31 +1,60 @@
-function add_menu_item(icon, title, href) {
+function add_submenu(icon, title, href, menu, active = false) {
   const li = document.createElement('li');
   const a =  document.createElement('a');
   a.href = href;
-  const i = document.createElement('i');
-  i.classList.add('fa', icon);
-  a.appendChild(i);
   a.append(title);
   li.appendChild(a);
-  $('#side-menu').append(li);
+  if (href === window.location.pathname) menu.classList.add('in');
+  if (active || href === window.location.pathname) li.classList.add('active');
+  menu.append(li);
 }
 
-function add_menu(icon, title, href) {
+function add_menu_item(icon, title, href, active = false) {
   const li = document.createElement('li');
   const a =  document.createElement('a');
-  a.href = href;
   const i = document.createElement('i');
+  const span = document.createElement('span');
+  a.href = href;
   i.classList.add('fa', icon);
+  span.classList.add('nav-label');
+  span.append(title);
   a.appendChild(i);
-  a.append(title);
+  a.append(' ');
+  a.append(span);
   li.appendChild(a);
+  if (active || href === window.location.pathname) li.classList.add('active');
   $('#side-menu').append(li);
 }
 
+function add_menu(icon, title, herf) {
+  const li = document.createElement('li');
+  const a =  document.createElement('a');
+  const i = document.createElement('i');
+  const span1 = document.createElement('span');
+  const span2 = document.createElement('span');
+  var ul = document.createElement('ul');
+  a.href = herf;
+  i.classList.add('fa', icon);
+  span1.classList.add('nav-label');
+  span2.classList.add('fa','arrow');
+  ul.classList.add('nav', 'nav-second-level', 'collapse');
+  span1.append(title);
+  a.appendChild(i);
+  a.append(' ');
+  a.appendChild(span1);
+  a.appendChild(span2);
+  li.appendChild(a);
+  li.appendChild(ul);
+  $('#side-menu').append(li);
+  return ul;
+}
 
-function init_side_menu() {
-
-  add_menu_item('fa-files-o', 'new menu item', '#');
+function init_side_menu(path) {
+  $(".metismenu").metisMenu('dispose');
+  add_menu_item('fa-home', 'Dashboard', '/');
+  var pages = add_menu('fa-files-o', 'Pages', '#');
+  add_submenu('fa-files-o', 'Posts', '/postes.html', pages);
+  $(".metismenu").metisMenu();
 }
 
 $(document).ready(function () {
@@ -51,7 +80,7 @@ $(document).ready(function () {
         console.log("  Photo URL: " + profile.photoURL);
       });
 
-      init_side_menu()
+      init_side_menu();
 
       $('.fullbox-loading').remove('.sk-loading');
       

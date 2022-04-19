@@ -213,15 +213,66 @@
         </div>
       </div>
   
-      <div class="wrapper wrapper-content">
-        <div class="middle-box text-center animated fadeInRightBig">
+      <div class="wrapper wrapper-content animated fadeInUp">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="ibox">
+              <div class="ibox-title">
+                <h5>All postes assigned to this account</h5>
+                <div class="ibox-tools">
+                  <a href="#" class="btn btn-primary btn-xs">Create new poste</a>
+                </div>
+              </div>
+              <div class="ibox-content">
+                <div class="m-b-sm m-t-sm">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button tabindex="-1" class="btn btn-white btn-sm" type="button"><i class="fa fa-refresh"></i> Refresh</button>
+                    </div>
+                    <input type="text" class="form-control form-control-sm">
+                    <div class="input-group-append">
+                      <button tabindex="-1" class="btn btn-primary btn-sm" type="button">Go!</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="post-list">
+                  <table class="table table-hover">
+                    <tbody>
+                      <!-- content of table -->
+                    </tbody>
+                  </table>
+                  <template id="post_template">
+                    <tr>
+                      <td class="post-status">
+                        <span class="label label-primary">Active</span>
+                      </td>
+                      <td class="post-title">
+                        <a href="#url">post title</a>
+                        <br/>
+                        <small>Created date</small>
+                      </td>
+                      <td class="post-completion">
+                        <small>Completion with: 48%</small>
+                        <div class="progress progress-mini">
+                          <div style="width: 48%;" class="progress-bar"></div>
+                        </div>
+                      </td>
+                      <td class="post-people">
 
-
-          <!-- content here -->
-
-
+                      </td>
+                      <td class="post-actions">
+                        <a href="#" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                        <a href="#" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                      </td>
+                    </tr>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+        
 
       <div class="footer">
         <div class="float-right">
@@ -248,9 +299,46 @@
   <script src="https://apcouleddjellal.dz/js/plugins/wow/wow.min.js"></script>
 
   <script type="module" src="js/firebase.js"></script>
-  <script>
+  <script type="module">
 
-    
+    // Initialize Firebase
+    var database = firebase.database();
+
+    function add_post(post) {
+      var tbody = document.querySelector("tbody");
+      var template = document.querySelector('#post_template').content.cloneNode(true);
+      template.querySelector('.post-title').querySelector('a').href = 'viewpost.html?id=' + post.url;
+      template.querySelector('.post-title').querySelector('a').textContent = post.title;
+      template.querySelector('.post-title').querySelector('small').textContent = 'Created ' + post.date;
+      tbody.appendChild(template);
+    }
+
+    firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+
+      const posts = database.ref('posts');
+      
+      posts.on('value', function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          var posts_byid = childSnapshot.val();
+          $.each(posts_byid, function(i, item) {
+              var post = posts_byid[i];
+              if (post != null)
+                add_post(post);
+          });
+
+        });
+      });
+
+
+    } else {
+      // User is signed out
+      // ...
+    }
+  });
+
 
   </script>
     

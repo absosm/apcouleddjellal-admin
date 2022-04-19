@@ -53,7 +53,7 @@ function init_side_menu(path) {
   $(".metismenu").metisMenu('dispose');
   add_menu_item('fa-home', 'Dashboard', '/');
   var pages = add_menu('fa-files-o', 'Pages', '#');
-  add_submenu('fa-files-o', 'Posts', '/postes.html', pages);
+  add_submenu('fa-files-o', 'Posts', '/posts.html', pages);
   $(".metismenu").metisMenu();
 }
 

@@ -72,13 +72,13 @@ $(document).ready(function () {
       $('#photo_url').attr('src', photoURL);
       $('#display_name').html(displayName);
 
-      user.providerData.forEach((profile) => {
-        console.log("Sign-in provider: " + profile.providerId);
-        console.log("  Provider-specific UID: " + profile.uid);
-        console.log("  Name: " + profile.displayName);
-        console.log("  Email: " + profile.email);
-        console.log("  Photo URL: " + profile.photoURL);
-      });
+      // user.providerData.forEach((profile) => {
+      //   console.log("Sign-in provider: " + profile.providerId);
+      //   console.log("  Provider-specific UID: " + profile.uid);
+      //   console.log("  Name: " + profile.displayName);
+      //   console.log("  Email: " + profile.email);
+      //   console.log("  Photo URL: " + profile.photoURL);
+      // });
 
       init_side_menu();
 

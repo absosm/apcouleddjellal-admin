@@ -304,11 +304,16 @@
     // Initialize Firebase
     var database = firebase.database();
 
+    function clear_posts() {
+      var tbody = document.querySelector("tbody");
+      tbody.innerHTML = '';
+    }
+
     function add_post(post) {
       var tbody = document.querySelector("tbody");
       var template = document.querySelector('#post_template').content.cloneNode(true);
       template.querySelector('.post-title').querySelector('a').href = 'viewpost.html?id=' + post.url;
-      template.querySelector('.post-title').querySelector('a').textContent = post.title;
+      template.querySelector('.post-title').querySelector('a').textContent = post.subject;
       template.querySelector('.post-title').querySelector('small').textContent = 'Created ' + post.date;
       tbody.appendChild(template);
     }
@@ -321,6 +326,7 @@
       const posts = database.ref('posts');
       
       posts.on('value', function(snapshot) {
+        clear_posts();
         snapshot.forEach(function(childSnapshot) {
           var posts_byid = childSnapshot.val();
           $.each(posts_byid, function(i, item) {
@@ -328,7 +334,6 @@
               if (post != null)
                 add_post(post);
           });
-
         });
       });
 

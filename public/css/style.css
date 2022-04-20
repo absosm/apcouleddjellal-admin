@@ -6192,6 +6192,55 @@ a.compose-mail {
 .mail-ontact {
   width: 23%;
 }
+/* POSTBOX */
+.post-box {
+  background-color: #ffffff;
+  border: 1px solid #e7eaec;
+  border-top: 0;
+  padding: 0;
+  margin-bottom: 20px;
+}
+.post-box-header {
+  background-color: #ffffff;
+  border: 1px solid #e7eaec;
+  border-bottom: 0;
+  padding: 30px 20px 20px 20px;
+}
+.post-box-header h2 {
+  margin-top: 0;
+}
+.postbox-content .tag-list li a {
+  background: #ffffff;
+}
+.post-body {
+  border-top: 1px solid #e7eaec;
+  padding: 20px;
+}
+.post-text {
+  border-top: 1px solid #e7eaec;
+}
+.post-text .note-toolbar {
+  padding: 10px 15px;
+}
+.post-body .form-group {
+  margin-bottom: 5px;
+}
+.post-text .note-editor .note-toolbar {
+  background-color: #F9F8F8;
+}
+.post-attachment {
+  border-top: 1px solid #e7eaec;
+  padding: 20px;
+  font-size: 12px;
+}
+.postbox-content {
+  background: none;
+  border: none;
+  padding: 10px;
+}
+.post-ontact {
+  width: 23%;
+}
 /* POSTES */
 .post-people,
 .post-actions {

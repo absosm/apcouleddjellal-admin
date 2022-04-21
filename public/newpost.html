@@ -239,7 +239,7 @@
             </div>
             <div class="post-text h-200">
               <div class="summernote">
-                <!-- write subject here. -->
+                <br/>
                 <p>[write subject here]</p>
                 <br/>
                 <br/>
@@ -297,6 +297,14 @@
         date: date,
         content: content,
         url: postId
+      }, (error) => {
+        if (error) {
+          // The write failed...
+          alert(error);
+        } else {
+          // Data saved successfully!
+          window.location.href = 'posts.html';
+        }
       });
     }
 
@@ -324,9 +332,10 @@
 
           var post_subject = $('#post_subject').val();
           var post_date = $('#post_date').val();
-          var post_content = $('.summernote').html();
+          var post_content = $('.summernote').summernote('code');
 
-          writePost(user.uid, post_subject, post_date, post_content);        
+          writePost(user.uid, post_subject, post_date, post_content);
+
         } else {
           // User is signed out
           // ...

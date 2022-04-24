@@ -312,7 +312,7 @@
     function add_post(post) {
       var tbody = document.querySelector("tbody");
       var template = document.querySelector('#post_template').content.cloneNode(true);
-      template.querySelector('.post-title').querySelector('a').href = 'https://apcouleddjellal.dz/post.html#postid=' + post.url;
+      template.querySelector('.post-title').querySelector('a').href = 'https://apcouleddjellal.dz/post.html#id=' + post.url;
       template.querySelector('.post-title').querySelector('a').textContent = post.subject;
       template.querySelector('.post-title').querySelector('small').textContent = 'Created ' + post.date;
       tbody.appendChild(template);

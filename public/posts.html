@@ -276,10 +276,10 @@
 
       <div class="footer">
         <div class="float-right">
-          Developed by <strong>@absosm</strong> .
+          Dev by <strong>@absosm</strong> .
         </div>
         <div>
-          <strong>Copyright</strong> apcouleddjellal &copy; 2022
+          apcouleddjellal &copy; 2022
         </div>
       </div>
     </div>
@@ -312,7 +312,7 @@
     function add_post(post) {
       var tbody = document.querySelector("tbody");
       var template = document.querySelector('#post_template').content.cloneNode(true);
-      template.querySelector('.post-title').querySelector('a').href = 'viewpost.html?id=' + post.url;
+      template.querySelector('.post-title').querySelector('a').href = 'https://apcouleddjellal.dz/post.html#postid=' + post.url;
       template.querySelector('.post-title').querySelector('a').textContent = post.subject;
       template.querySelector('.post-title').querySelector('small').textContent = 'Created ' + post.date;
       tbody.appendChild(template);

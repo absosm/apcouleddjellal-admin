@@ -7888,6 +7888,7 @@ body.body-small .vote-icon {
   right: 0;
   z-index: 2000;
 }
+/* fullbox loading */
 .fullbox-loading.sk-loading:after {
   content: '';
   background-color: rgba(255, 255, 255, 1);

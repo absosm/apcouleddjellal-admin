@@ -8539,6 +8539,7 @@ body.landing-page {
 }
 body.rtls {
   text-align: right !important;
+  direction: rtl;
   /* Theme config */
 }
 body.rtls .nav-second-level li a {

@@ -241,6 +241,9 @@
                       <!-- content of table -->
                     </tbody>
                   </table>
+
+                  <!-- post row template -->
+
                   <template id="post_template">
                     <tr>
                       <td class="post-status">
@@ -261,11 +264,13 @@
 
                       </td>
                       <td class="post-actions">
-                        <a href="#" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
-                        <a href="#" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                        <a href="#" target="_blank" id="view" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                        <a href="#" id="edit" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
                       </td>
                     </tr>
                   </template>
+
+
                 </div>
               </div>
             </div>
@@ -282,6 +287,8 @@
           apcouleddjellal &copy; 2022
         </div>
       </div>
+
+      
     </div>
   </div>
 
@@ -312,7 +319,8 @@
     function add_post(post) {
       var tbody = document.querySelector("tbody");
       var template = document.querySelector('#post_template').content.cloneNode(true);
-      template.querySelector('.post-title').querySelector('a').href = 'post.html#id=' + post.url;
+      // template.querySelector('.post-title').querySelector('a').href = 'post.html#id=' + post.url;
+      template.querySelector('.post-actions').querySelector('#view').href = 'post.html#id=' + post.url;
       template.querySelector('.post-title').querySelector('a').textContent = post.subject;
       template.querySelector('.post-title').querySelector('small').textContent = 'Created ' + post.date;
       tbody.appendChild(template);

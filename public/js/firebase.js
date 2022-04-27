@@ -70,6 +70,11 @@ function slice_hash(hash_url) {
 
 $(document).ready(function () {
 
+  toastr.options = {
+    "positionClass": "toast-top-right",
+    "timeOut": 8000
+  }
+
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       // User is signed in, see docs for a list of available properties
@@ -83,6 +88,10 @@ $(document).ready(function () {
       $('#photo_url').attr('src', photoURL);
       $('#display_name').html(displayName);
 
+      if (!emailVerified) {
+        toastr.warning('email not verified, please check your mail box and verify.','Email Verification');
+      }
+
       // user.providerData.forEach((profile) => {
       //   console.log("Sign-in provider: " + profile.providerId);
       //   console.log("  Provider-specific UID: " + profile.uid);
@@ -90,6 +99,8 @@ $(document).ready(function () {
       //   console.log("  Email: " + profile.email);
       //   console.log("  Photo URL: " + profile.photoURL);
       // });
+
+
 
       init_side_menu();
 

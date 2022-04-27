@@ -29,21 +29,19 @@
     <!-- include only the Firebase features as you need -->
     <script defer src="/__/firebase/9.6.10/firebase-auth-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-database-compat.js"></script>
-    <!-- <script defer src="/__/firebase/9.6.10/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/9.6.10/firebase-firestore-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-functions-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-messaging-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-storage-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-analytics-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/9.6.10/firebase-performance-compat.js"></script> -->
+    <script defer src="/__/firebase/9.6.10/firebase-performance-compat.js"></script>
     <!-- 
         initialize the SDK after all desired features are loaded, set useEmulator to false
         to avoid connecting the SDK to running emulators.
     -->
     <!-- <script defer src="/__/firebase/init.js?useEmulator=true"></script> -->
     <script defer src="/__/firebase/init.js"></script>
-
-
 </head>
 <body class="gray-bg">
 
@@ -67,21 +65,26 @@
             </div>
             <h3>Welcome to CPanel</h3>
             </p>
-            <p>Login in. To see it in action.</p>
+            <p>Register. To see it in action.</p>
             <form id="login" class="m-t" role="form" method="post" enctype="multipart/form-data">
                 <div class="form-group">
-                    <input type="text" id="username" name="username" class="form-control" placeholder="Username" required>
+                    <input type="text" id="displayName" name="displayName" class="form-control" autocomplete="name" placeholder="Display Name" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="password" name="password" class="form-control" autocomplete="current-password" placeholder="Password" required>
+                    <input type="text" id="email" name="email" class="form-control" autocomplete="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="phone" name="phone" class="form-control" autocomplete="tel" placeholder="Phone" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" name="password" class="form-control" autocomplete="new-password" placeholder="Password" required>
                 </div>
                 <!-- custom-alert -->
                 <div class="alert alert-danger custom-alert" style="display: none"></div>
 
-                <button type="submit" class="ladda-button ladda-button-demo btn btn-primary block full-width m-b" data-style="zoom-in">Login</button>
-                <a href="#"><small>Forgot password?</small></a>
-                <p class="text-muted text-center"><small>Do not have an account?</small></p>
-                <a class="btn btn-sm btn-white btn-block" href="register.html">Create an account</a>
+                <button type="submit" class="ladda-button ladda-button-demo btn btn-primary block full-width m-b" data-style="zoom-in">Register</button>
+                <p class="text-muted text-center"><small>Do you have an account?</small></p>
+                <a class="btn btn-sm btn-white btn-block" href="login.html">Login Now</a>
             </form>
             <p class="m-t"> <small>apcouleddjellal.dz &copy; 2022</small> </p>
         </div>
@@ -113,6 +116,8 @@
 
 var l = $( '.ladda-button-demo' ).ladda();
 
+
+
 $(document).ready(function() {
 
 
@@ -133,17 +138,70 @@ $(document).ready(function() {
 
 });
 
+function signUpWithEmailPassword() {
+
+    var displayName = $('#displayName').val();
+    var email = $('#email').val();
+    var phone = $('#phone').val();
+    var password = $('#password').val();
+
+    // [START auth_signup_password]
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+        // Signed in 
+        var user = userCredential.user;
+        user.sendEmailVerification();
+            
+        user.updateProfile({
+            displayName: displayName,
+            phoneNumber: phone,
+            photoURL: "https://apcouleddjellal.dz/img/default.png"
+        }).then(function() {
+            signInWithEmailPassword();            
+        }, function(error) {
+            console.log(error);
+        });
+    })
+    .catch((error) => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // ..
+        console.log(error);
+
+        l.ladda('stop');
+    });
+    // [END auth_signup_password]
+}
+
 function signInWithEmailPassword() {
 
-    var email = $('#username').val();
+    var displayName = $('#displayName').val();
+    var email = $('#email').val();
+    var phone = $('#phone').val();
     var password = $('#password').val();
+
     // [START auth_signin_password]
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
         // Signed in
         var user = userCredential.user;
+        user.updateProfile({
+            displayName: displayName,
+            phoneNumber: phone,
+            photoURL: "https://apcouleddjellal.dz/img/default.png"
+        }).then(function() {
+
+            user.sendEmailVerification()
+            .then(() => {
+                // Email verification sent!
+                // ...
+                window.location.href = './';
+            });
+            
+        }, function(error) {
+            console.log(error);
+        });
         // ...
-        window.location.href = './';
     })
     .catch((error) => {
         var errorCode = error.code;
@@ -181,7 +239,8 @@ $('#login').on('submit', function (e) {
     if (!e.isDefaultPrevented()) { 
 
         e.preventDefault();
-        signInWithEmailPassword();
+        signUpWithEmailPassword();
+        //signInWithEmailPassword();
     }
 
     l.ladda( 'start' );

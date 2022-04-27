@@ -132,28 +132,26 @@
 
     <script type="module">
 
-        var bl = window.location.hash.slice(1).split('?');
-        var postid = null;
-
-        if(bl.length >= 1) {
-            for(var i = 0; i < bl.length; i += 1){
-                switch (bl[i].split('=')[0]) {
-                    case 'id':
-                        postid = bl[i].split('=')[1];
-                        break;
-                    default:
-                        null;
-                        break;
+        function slice_hash(hash_url) {
+            var bl = hash_url.slice(1).split('?');
+            var hash = {};
+            if(bl.length >= 1) {
+                for(var i = 0; i < bl.length; i += 1) {
+                hash[bl[i].split('=')[0]]=bl[i].split('=')[1];
                 }
             }
+            return hash;
         }
 
-        if (postid != null) {
+        const hash_url = slice_hash(window.location.hash);
+
+        if (hash_url != null) {
 
             var database = firebase.database();
             const rootRef = database.ref('posts');
+            const id = hash_url['id'];
 
-            rootRef.orderByChild(postid).limitToLast(1).once('value')
+            rootRef.orderByChild(id).limitToLast(1).once('value')
             .then((querySnapshot) => {
 
                 //console.log(querySnapshot.val());
@@ -166,13 +164,13 @@
                 querySnapshot.forEach((snap) => dataSnapshot = snap); // get the snapshot we want out of the query's results list
 
                 if (!dataSnapshot.exists()) { // value may be null, meaning idToFind doesn't exist
-                    throw new Error(`Entry ${postid} not found.`);
+                    throw new Error(`Entry ${id} not found.`);
                     console.log(`Entry ${postid} not found`);
                 }
 
                 var posts_byid = dataSnapshot.val();
                 console.log(posts_byid);
-                var post = posts_byid[postid];
+                var post = posts_byid[id];
                 if (post != null) {
                     $('.subject-post').html(post.subject);
                     $('#content-post').html(post.content);

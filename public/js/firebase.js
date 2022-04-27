@@ -57,6 +57,17 @@ function init_side_menu(path) {
   $(".metismenu").metisMenu();
 }
 
+function slice_hash(hash_url) {
+  var bl = hash_url.slice(1).split('?');
+  var hash = {};
+  if(bl.length >= 1) {
+    for(var i = 0; i < bl.length; i += 1) {
+      hash[bl[i].split('=')[0]]=bl[i].split('=')[1];
+    }
+  }
+  return hash;
+}
+
 $(document).ready(function () {
 
   firebase.auth().onAuthStateChanged((user) => {

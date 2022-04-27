@@ -17,6 +17,9 @@
   <link href="https://apcouleddjellal.dz/css/animate.css" rel="stylesheet">
   <link href="https://apcouleddjellal.dz/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
+  <!-- Sweet Alert -->
+  <link href="https://apcouleddjellal.dz/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
   <!-- Custom styles for this template -->
   <link href="css/style.css?v0.0.0.2" rel="stylesheet">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
@@ -301,20 +304,40 @@
   <script src="https://apcouleddjellal.dz/js/plugins/metisMenu/jquery.metisMenu.js"></script>
   <script src="https://apcouleddjellal.dz/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
+  <!-- Sweet alert -->
+  <script src="https://apcouleddjellal.dz/js/plugins/sweetalert/sweetalert.min.js"></script>
+
   <!-- Custom and plugin javascript -->
   <script src="https://apcouleddjellal.dz/js/inspinia.js"></script>
   <script src="https://apcouleddjellal.dz/js/plugins/pace/pace.min.js"></script>
   <script src="https://apcouleddjellal.dz/js/plugins/wow/wow.min.js"></script>
 
-  <script type="module" src="js/firebase.js"></script>
+  <script src="js/firebase.js"></script>
   <script type="module">
 
     // Initialize Firebase
     var database = firebase.database();
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/firebase.User
+    const posts = database.ref('posts');
 
     function clear_posts() {
       var tbody = document.querySelector("tbody");
       tbody.innerHTML = '';
+    }
+
+    function remove_post(id) {
+      const uid = firebase.auth().currentUser.uid;
+      posts.child(uid).child(id).set (null, (error) => {
+        if (error) {
+          // The write failed...
+          alert(error);
+          swal("Error!", error, "error");
+        } else {
+          // Data delete successfully!
+          swal("Deleted!", "Your post has been deleted.", "success");
+        }
+      });
     }
 
     function add_post(post) {
@@ -323,6 +346,24 @@
       // template.querySelector('.post-title').querySelector('a').href = 'post.html#id=' + post.url;
       template.querySelector('.post-actions').querySelector('#view').href = 'post.html#id=' + post.url;
       template.querySelector('.post-actions').querySelector('#delete').href = '#id=' + post.url;
+      template.querySelector('.post-actions').querySelector('#delete').onclick = function() { 
+        const hash = slice_hash($(this).attr("href"));
+        if (hash != null) {
+          const id = hash['id'];
+
+          swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this post",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete it!",
+            closeOnConfirm: false
+          }, function () {
+            remove_post(id);
+          });
+        }
+      }
       template.querySelector('.post-title').querySelector('a').textContent = post.subject;
       template.querySelector('.post-title').querySelector('small').textContent = 'Created ' + post.date;
       tbody.appendChild(template);
@@ -330,9 +371,7 @@
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        const posts = database.ref('posts');
+
         posts.on('value', function(snapshot) {
           clear_posts();
           snapshot.forEach(function(childSnapshot) {
@@ -348,14 +387,7 @@
         // User is signed out
         // ...
       }
-    });
-
-    $("#delete").click(function () {
-      var addressValue = $(this).attr("href");
-      alert(addressValue );
-    });
-
-    
+    });   
 
   </script>
     

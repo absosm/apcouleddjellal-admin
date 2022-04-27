@@ -66,7 +66,7 @@
             <h3>Welcome to CPanel</h3>
             </p>
             <p>Register. To see it in action.</p>
-            <form id="login" class="m-t" role="form" method="post" enctype="multipart/form-data">
+            <form id="signup" class="m-t" role="form" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <input type="text" id="displayName" name="displayName" class="form-control" autocomplete="name" placeholder="Display Name" required>
                 </div>
@@ -116,10 +116,7 @@
 
 var l = $( '.ladda-button-demo' ).ladda();
 
-
-
 $(document).ready(function() {
-
 
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
@@ -128,6 +125,7 @@ $(document).ready(function() {
             var uid = user.uid;
             // ...
             window.location.href = './';
+
         } else {
             // User is signed out
             // ...
@@ -140,9 +138,7 @@ $(document).ready(function() {
 
 function signUpWithEmailPassword() {
 
-    var displayName = $('#displayName').val();
     var email = $('#email').val();
-    var phone = $('#phone').val();
     var password = $('#password').val();
 
     // [START auth_signup_password]
@@ -150,21 +146,10 @@ function signUpWithEmailPassword() {
     .then((userCredential) => {
         // Signed in 
         var user = userCredential.user;
-        user.sendEmailVerification()
-            .then(() => {
-                // Email verification sent!
-                // ...
-                console.log('Email verification sent!');
-            });
-            
-        user.updateProfile({
-            displayName: displayName,
-            phoneNumber: phone,
-            photoURL: "https://apcouleddjellal.dz/img/default.png"
-        }).then(function() {
-            signInWithEmailPassword();            
-        }, function(error) {
-            console.log(error);
+        user.sendEmailVerification().then(() => {
+            // Email verification sent!
+            // ...
+            signInWithEmailPassword();
         });
     })
     .catch((error) => {
@@ -172,7 +157,6 @@ function signUpWithEmailPassword() {
         var errorMessage = error.message;
         // ..
         console.log(error);
-
         l.ladda('stop');
     });
     // [END auth_signup_password]
@@ -195,14 +179,7 @@ function signInWithEmailPassword() {
             phoneNumber: phone,
             photoURL: "https://apcouleddjellal.dz/img/default.png"
         }).then(function() {
-
-            user.sendEmailVerification()
-            .then(() => {
-                // Email verification sent!
-                // ...
-                window.location.href = './';
-            });
-            
+            window.location.href = './';            
         }, function(error) {
             console.log(error);
         });
@@ -239,7 +216,7 @@ $('input').focus(function(){
     $('.custom-alert').fadeOut();
 });
 
-$('#login').on('submit', function (e) {
+$('#signup').on('submit', function (e) {
 
     if (!e.isDefaultPrevented()) { 
 

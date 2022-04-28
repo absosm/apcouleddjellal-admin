@@ -270,7 +270,7 @@
 
                       </td>
                       <td class="post-actions">
-                        <a href="#" target="_blank" id="view" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                        <a href="#" id="view" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
                         <a href="#" id="edit" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
                         <a href="#" id="delete" class="btn btn-white btn-sm"><i class="fa fa-remove"></i> Delete </a>
                       </td>
@@ -349,7 +349,7 @@
     function add_post(post) {
       var tbody = document.querySelector("tbody");
       var template = document.querySelector('#post_template').content.cloneNode(true);
-      // template.querySelector('.post-title').querySelector('a').href = 'post.html#id=' + post.url;
+      template.querySelector('.post-title').querySelector('a').href = 'post.html#id=' + post.url;
       template.querySelector('.post-actions').querySelector('#view').href = 'post.html#id=' + post.url;
       template.querySelector('.post-actions').querySelector('#delete').href = '#id=' + post.url;
       template.querySelector('.post-actions').querySelector('#delete').onclick = function() { 

@@ -20,6 +20,9 @@
     <!-- Ladda style -->
     <link href="https://apcouleddjellal.dz/css/plugins/ladda/ladda-themeless.min.css" rel="stylesheet">
 
+    <!-- Sweet Alert -->
+    <link href="https://apcouleddjellal.dz/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
     <!-- Custom styles for this template -->
     <link href="css/style.css?v0.0.0.1" rel="stylesheet">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
@@ -29,13 +32,13 @@
     <!-- include only the Firebase features as you need -->
     <script defer src="/__/firebase/9.6.10/firebase-auth-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/9.6.10/firebase-firestore-compat.js"></script>
+    <!-- <script defer src="/__/firebase/9.6.10/firebase-firestore-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-functions-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-messaging-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-storage-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-analytics-compat.js"></script>
     <script defer src="/__/firebase/9.6.10/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/9.6.10/firebase-performance-compat.js"></script>
+    <script defer src="/__/firebase/9.6.10/firebase-performance-compat.js"></script> -->
     <!-- 
         initialize the SDK after all desired features are loaded, set useEmulator to false
         to avoid connecting the SDK to running emulators.
@@ -103,6 +106,9 @@
 <script src="https://apcouleddjellal.dz/js/plugins/pace/pace.min.js"></script>
 <script src="https://apcouleddjellal.dz/js/plugins/wow/wow.min.js"></script>
 
+<!-- Sweet alert -->
+<script src="https://apcouleddjellal.dz/js/plugins/sweetalert/sweetalert.min.js"></script>
+
 <!-- Ladda -->
 <script src="https://apcouleddjellal.dz/js/plugins/ladda/spin.min.js"></script>
 <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.min.js"></script>
@@ -116,8 +122,6 @@
 
 var l = $( '.ladda-button-demo' ).ladda();
 
-
-
 $(document).ready(function() {
 
 
@@ -127,11 +131,10 @@ $(document).ready(function() {
             // https://firebase.google.com/docs/reference/js/firebase.User
             var uid = user.uid;
             // ...
-            window.location.href = './';
+            // window.location.href = './';
         } else {
             // User is signed out
             // ...
-            
             $('.fullbox-loading').remove('.sk-loading');
         }
     });
@@ -150,97 +153,48 @@ function signUpWithEmailPassword() {
     .then((userCredential) => {
         // Signed in 
         var user = userCredential.user;
-        
         user.updateProfile({
             displayName: displayName,
             phoneNumber: phone,
             photoURL: "https://apcouleddjellal.dz/img/default.png"
         }).then(function() {
-            console.log('Profile updated!');
+            user.sendEmailVerification()
+            .then(() => {
+                // Email verification sent!
+                // ...
+                swal({
+                    title: "Successful!",
+                    text: "Email verification sent!, Login Now?",
+                    type: "success",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, login!",
+                    closeOnConfirm: false
+                }, function () {
+                    window.location.href = './';
+                });
+            });
         }, function(error) {
             console.log(error);
         });
-
-        signInWithEmailPassword();
-
-        user.sendEmailVerification()
-        .then(() => {
-            // Email verification sent!
-            // ...
-            console.log('Email verification sent!');
-            //window.location.href = './';
-        });   
     })
     .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
         // ..
-        console.log(error);
-
-        l.ladda('stop');
-    });
-    // [END auth_signup_password]
-}
-
-function signInWithEmailPassword() {
-
-    var displayName = $('#displayName').val();
-    var email = $('#email').val();
-    var phone = $('#phone').val();
-    var password = $('#password').val();
-
-    // [START auth_signin_password]
-    firebase.auth().signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-        // Signed in
-        var user = userCredential.user;
-        // user.updateProfile({
-        //     displayName: displayName,
-        //     phoneNumber: phone,
-        //     photoURL: "https://apcouleddjellal.dz/img/default.png"
-        // }).then(function() {
-            
-        // }, function(error) {
-        //     console.log(error);
-        // });
-
-        // user.sendEmailVerification()
-        // .then(() => {
-        //     // Email verification sent!
-        //     // ...
-        //     console.log('Email verification sent!');
-        //     window.location.href = './';
-        // });
-
-        window.location.href = './';
-
-        // ...
-    })
-    .catch((error) => {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-
         switch (errorCode) {
-            case 'auth/wrong-password':
-                $('.custom-alert').html('The password is invalid or the user does not have a password.');
+            case 'auth/email-already-in-use':
+                $('.custom-alert').html('The email address is already in use by another account.');
                 $('.custom-alert').fadeIn();
                 break;
-            case 'auth/user-not-found':
-                $('.custom-alert').html('There is no user record corresponding to this identifier.');
-                $('.custom-alert').fadeIn();
-                break;
-            case 'auth/too-many-requests':
-                $('.custom-alert').html('Access to this account has been temporarily disabled.');
-                $('.custom-alert').fadeIn();
             default:
                 $('.custom-alert').html(errorMessage);
                 $('.custom-alert').fadeIn();
 
         }
-
         l.ladda('stop');
     });
-    // [END auth_signin_password]
+    // [END auth_signup_password]
 }
 
 $('input').focus(function(){

@@ -116,7 +116,10 @@
 
 var l = $( '.ladda-button-demo' ).ladda();
 
+
+
 $(document).ready(function() {
+
 
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
@@ -125,7 +128,6 @@ $(document).ready(function() {
             var uid = user.uid;
             // ...
             window.location.href = './';
-
         } else {
             // User is signed out
             // ...
@@ -138,7 +140,9 @@ $(document).ready(function() {
 
 function signUpWithEmailPassword() {
 
+    var displayName = $('#displayName').val();
     var email = $('#email').val();
+    var phone = $('#phone').val();
     var password = $('#password').val();
 
     // [START auth_signup_password]
@@ -146,17 +150,33 @@ function signUpWithEmailPassword() {
     .then((userCredential) => {
         // Signed in 
         var user = userCredential.user;
-        user.sendEmailVerification().then(() => {
+        
+        user.updateProfile({
+            displayName: displayName,
+            phoneNumber: phone,
+            photoURL: "https://apcouleddjellal.dz/img/default.png"
+        }).then(function() {
+            console.log('Profile updated!');
+        }, function(error) {
+            console.log(error);
+        });
+
+        signInWithEmailPassword();
+
+        user.sendEmailVerification()
+        .then(() => {
             // Email verification sent!
             // ...
-            signInWithEmailPassword();
-        });
+            console.log('Email verification sent!');
+            //window.location.href = './';
+        });   
     })
     .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
         // ..
         console.log(error);
+
         l.ladda('stop');
     });
     // [END auth_signup_password]
@@ -174,15 +194,26 @@ function signInWithEmailPassword() {
     .then((userCredential) => {
         // Signed in
         var user = userCredential.user;
-        user.updateProfile({
-            displayName: displayName,
-            phoneNumber: phone,
-            photoURL: "https://apcouleddjellal.dz/img/default.png"
-        }).then(function() {
-            window.location.href = './';            
-        }, function(error) {
-            console.log(error);
-        });
+        // user.updateProfile({
+        //     displayName: displayName,
+        //     phoneNumber: phone,
+        //     photoURL: "https://apcouleddjellal.dz/img/default.png"
+        // }).then(function() {
+            
+        // }, function(error) {
+        //     console.log(error);
+        // });
+
+        // user.sendEmailVerification()
+        // .then(() => {
+        //     // Email verification sent!
+        //     // ...
+        //     console.log('Email verification sent!');
+        //     window.location.href = './';
+        // });
+
+        window.location.href = './';
+
         // ...
     })
     .catch((error) => {

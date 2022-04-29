@@ -43,7 +43,8 @@
     <!-- <script defer src="/__/firebase/init.js?useEmulator=true"></script> -->
     <script defer src="/__/firebase/init.js"></script>
 
-
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js" defer ></script>
 </head>
 <body class="gray-bg">
 
@@ -105,6 +106,8 @@
 <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.min.js"></script>
 <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.jquery.min.js"></script>
 
+<script src="js/firebase.js"></script>
+
 <script type="module">
 
 // $('#ibox1').children('.ibox-content').toggleClass('sk-loading');
@@ -114,62 +117,69 @@
 var l = $( '.ladda-button-demo' ).ladda();
 
 $(document).ready(function() {
-
-
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/firebase.User
             var uid = user.uid;
             // ...
-            window.location.href = './';
+            //window.location.href = './';
         } else {
             // User is signed out
             // ...
-            
             $('.fullbox-loading').remove('.sk-loading');
         }
     });
-
 });
 
 function signInWithEmailPassword() {
 
     var email = $('#username').val();
     var password = $('#password').val();
-    // [START auth_signin_password]
-    firebase.auth().signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-        // Signed in
-        var user = userCredential.user;
-        // ...
-        window.location.href = './';
-    })
-    .catch((error) => {
+
+    firebase.auth().signInWithEmailAndPassword(email, password).then(({ user }) => {
+
+        user.getIdToken().then((idToken) => {
+
+            axios.post(`${API_URL}/login`, 
+                JSON.stringify({ idToken }), 
+                {headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"}              
+            }).then(res => {
+                var message = res.data;
+                if (message.success) {
+                    //..
+                    window.location.href = '/';
+                }else {
+                    firebase.auth().signOut();
+                }
+                l.ladda('stop');
+            });
+        }).catch((error) => {
+            console.log('error: getIdToken failed');
+        });
+    }).catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
-
         switch (errorCode) {
-            case 'auth/wrong-password':
-                $('.custom-alert').html('The password is invalid or the user does not have a password.');
-                $('.custom-alert').fadeIn();
-                break;
-            case 'auth/user-not-found':
-                $('.custom-alert').html('There is no user record corresponding to this identifier.');
-                $('.custom-alert').fadeIn();
-                break;
-            case 'auth/too-many-requests':
-                $('.custom-alert').html('Access to this account has been temporarily disabled.');
-                $('.custom-alert').fadeIn();
-            default:
-                $('.custom-alert').html(errorMessage);
-                $('.custom-alert').fadeIn();
-
+        case 'auth/wrong-password':
+            $('.custom-alert').html('The password is invalid or the user does not have a password.');
+            $('.custom-alert').fadeIn();
+            break;
+        case 'auth/user-not-found':
+            $('.custom-alert').html('There is no user record corresponding to this identifier.');
+            $('.custom-alert').fadeIn();
+            break;
+        case 'auth/too-many-requests':
+            $('.custom-alert').html('Access to this account has been temporarily disabled.');
+            $('.custom-alert').fadeIn();
+        default:
+            $('.custom-alert').html(errorMessage);
+            $('.custom-alert').fadeIn();
         }
-
         l.ladda('stop');
     });
-    // [END auth_signin_password]
 }
 
 $('input').focus(function(){
@@ -181,6 +191,7 @@ $('#login').on('submit', function (e) {
     if (!e.isDefaultPrevented()) { 
 
         e.preventDefault();
+
         signInWithEmailPassword();
     }
 

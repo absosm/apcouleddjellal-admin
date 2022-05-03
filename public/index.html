@@ -71,7 +71,7 @@
                 <span class="text-muted text-xs block">Publisher <b class="caret"></b></span>
               </a>
               <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+                <li><a id="profile" class="dropdown-item" href="#">Profile</a></li>
                 <li><a class="dropdown-item" href="contacts.html">Contacts</a></li>
                 <li><a class="dropdown-item" href="mailbox.html">Mailbox</a></li>
                 <li class="dropdown-divider"></li>
@@ -257,7 +257,22 @@
   <script src="https://apcouleddjellal.dz/js/plugins/pace/pace.min.js"></script>
   <script src="https://apcouleddjellal.dz/js/plugins/wow/wow.min.js"></script>
 
-  <script src="js/firebase.js"></script>
-  <script src="js/dash.js"></script>
+  <script defer src="js/firebase.js"></script>
+  <script defer src="js/dash.js"></script>
+
+  <script>
+    $('#profile').click(()=>{
+      axios.post(`${API_URL}/register`, {
+        credentials:{
+          displayName: "ossama40",
+          email: "ossama40@gmail.com", 
+          phoneNumber: "+213550200150",
+          password: "19121989",
+        }
+      }).then(res => {
+        console.log(res.data);
+      });
+    })
+  </script>
 </body>
 </html>

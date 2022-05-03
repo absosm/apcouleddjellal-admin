@@ -1,5 +1,6 @@
 // const API_URL = 'http://localhost:5000';
 const API_URL = 'https://apcouleddjellal-main.herokuapp.com';
+const auth = firebase.auth();
 
 function slice_hash(hash_url) {
   var bl = hash_url.slice(1).split('?');

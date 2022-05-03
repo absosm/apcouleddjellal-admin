@@ -106,7 +106,7 @@
 <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.min.js"></script>
 <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.jquery.min.js"></script>
 
-<script src="js/firebase.js"></script>
+<script defer src="js/firebase.js"></script>
 
 <script type="module">
 
@@ -117,16 +117,12 @@
 var l = $( '.ladda-button-demo' ).ladda();
 
 $(document).ready(function() {
-    firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-            // User is signed in, see docs for a list of available properties
-            // https://firebase.google.com/docs/reference/js/firebase.User
-            var uid = user.uid;
-            // ...
-            //window.location.href = './';
-        } else {
-            // User is signed out
-            // ...
+    axios.defaults.withCredentials = true;
+    axios.post(`${API_URL}/session`).then(res => {
+        const message = res.data;
+        if (message.success && message.result) {
+            window.location.href = './';
+        }else {
             $('.fullbox-loading').remove('.sk-loading');
         }
     });
@@ -139,25 +135,20 @@ function signInWithEmailPassword() {
 
     firebase.auth().signInWithEmailAndPassword(email, password).then(({ user }) => {
 
-        user.getIdToken().then((idToken) => {
+        return user.getIdToken().then((idToken) => {
 
-            axios.post(`${API_URL}/login`, 
+            return axios.post(`${API_URL}/login`, 
                 JSON.stringify({ idToken }), 
                 {headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json"}              
-            }).then(res => {
-                var message = res.data;
-                if (message.success) {
-                    //..
-                    window.location.href = '/';
-                }else {
-                    firebase.auth().signOut();
-                }
-                l.ladda('stop');
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                } 
             });
-        }).catch((error) => {
-            console.log('error: getIdToken failed');
+        }).then( () => {
+            l.ladda('stop');
+            return firebase.auth().signOut();
+        }).then( () => {
+            window.location.href = './';
         });
     }).catch((error) => {
         var errorCode = error.code;

@@ -44,11 +44,7 @@
         to avoid connecting the SDK to running emulators.
     -->
     <!-- <script defer src="/__/firebase/init.js?useEmulator=true"></script> -->
-    <script defer src="/__/firebase/init.js"></script>
-
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js" defer ></script>
-    
+    <script defer src="/__/firebase/init.js"></script>    
 </head>
 <body class="gray-bg">
 
@@ -118,6 +114,11 @@
 <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.min.js"></script>
 <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.jquery.min.js"></script>
 
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js" defer ></script>
+
+<script defer src="js/firebase.js"></script>
+
 <script type="module">
 
 // $('#ibox1').children('.ibox-content').toggleClass('sk-loading');
@@ -128,21 +129,10 @@ var l = $( '.ladda-button-demo' ).ladda();
 
 $(document).ready(function() {
 
-
-    firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-            // User is signed in, see docs for a list of available properties
-            // https://firebase.google.com/docs/reference/js/firebase.User
-            var uid = user.uid;
-            // ...
-            // window.location.href = './';
-        } else {
-            // User is signed out
-            // ...
-            $('.fullbox-loading').remove('.sk-loading');
-        }
+    axios.defaults.withCredentials = true;
+    axios.post(`${API_URL}/session`).then(res => {
+        $('.fullbox-loading').remove('.sk-loading');
     });
-
 });
 
 function signUpWithEmailPassword() {
@@ -152,53 +142,49 @@ function signUpWithEmailPassword() {
     var phone = $('#phone').val();
     var password = $('#password').val();
 
-    // [START auth_signup_password]
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-        // Signed in 
-        var user = userCredential.user;
-        user.updateProfile({
-            displayName: displayName,
-            phoneNumber: phone,
-            photoURL: "https://apcouleddjellal.dz/img/default.png"
-        }).then(function() {
-            user.sendEmailVerification()
-            .then(() => {
-                // Email verification sent!
-                // ...
-                swal({
-                    title: "Successful!",
-                    text: "Email verification sent!, Login Now?",
-                    type: "success",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "Yes, login!",
-                    closeOnConfirm: false
-                }, function () {
-                    window.location.href = './';
-                });
-            });
-        }, function(error) {
-            console.log(error);
-        });
-    })
-    .catch((error) => {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // ..
-        switch (errorCode) {
-            case 'auth/email-already-in-use':
-                $('.custom-alert').html('The email address is already in use by another account.');
-                $('.custom-alert').fadeIn();
-                break;
-            default:
-                $('.custom-alert').html(errorMessage);
-                $('.custom-alert').fadeIn();
-
+    axios.post(`${API_URL}/register`, {
+        credentials: {
+            "displayName": displayName,
+            "email": email, 
+            "phoneNumber": phone,
+            "password": password,
         }
+    }).then((res)=>{
+
+        const message = res.data;
+        if (message.success) {
+
+            firebase.auth().signInWithEmailAndPassword(email, password).then(({ user }) => {
+
+                user.sendEmailVerification().then(() => {
+                    // Email verification sent!
+                    // ...
+                    swal({
+                        title: "Successful!",
+                        text: "Email verification sent!, Login Now?",
+                        type: "success",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes, login!",
+                        closeOnConfirm: false
+                    }, function () {
+                        window.location.href = 'verifyPhone.html';
+                    });
+
+                }).catch((error) => {
+                    console.log(error.message);
+                });
+            }).catch((error) => {
+                console.log(error.message);
+            });
+
+        }else {
+            var error = message.error;
+            console.log(error);
+        }
+
         l.ladda('stop');
     });
-    // [END auth_signup_password]
 }
 
 $('input').focus(function(){
@@ -211,7 +197,6 @@ $('#signup').on('submit', function (e) {
 
         e.preventDefault();
         signUpWithEmailPassword();
-        //signInWithEmailPassword();
     }
 
     l.ladda( 'start' );

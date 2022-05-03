@@ -1,9 +1,31 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+    <meta name="description" content="لوحة التحكم الخاصة بموقع بلدية أولاد جلال">
+    <meta name="keywords" content="APC OULED DJELLAL, OULED DJELLAL, أولاد جلال, اولاد جلال, commune ouled djellal, assemblée populaire communale, المجلس الشعبي البلدي">
+    <meta name="author" content="absosm">
+
+    <title>بلدية أولاد جلال | لوحة التحكم</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://apcouleddjellal.dz/css/bootstrap.min.css" rel="stylesheet"> 
+
+    <!-- Animation CSS -->
+    <link href="https://apcouleddjellal.dz/css/animate.css" rel="stylesheet">
+    <link href="https://apcouleddjellal.dz/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Ladda style -->
+    <link href="https://apcouleddjellal.dz/css/plugins/ladda/ladda-themeless.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="https://apcouleddjellal.dz/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/style.css?v0.0.0.1" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/9.6.10/firebase-app-compat.js"></script>
@@ -28,27 +50,44 @@
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js" defer ></script>
 
   </head>
-  <body>
 
+  <body class="gray-bg">
 
-    <section class="container phone-container">
-      <fieldset>
-        <div>
-            <img src="./img/logo.svg" alt="signin with your phone number" width="100" height="100">
+    <!-- <div class="fullbox-loading sk-loading">
+        <div class="sk-spinner sk-spinner-wave">
+            <div class="sk-rect1"></div>
+            <div class="sk-rect2"></div>
+            <div class="sk-rect3"></div>
+            <div class="sk-rect4"></div>
+            <div class="sk-rect5"></div>
         </div>
+    </div> -->
+
+    <div class="middle-box text-center loginscreen animated fadeInDown">
+
         <div>
-          <label for="phoneNumber">Phone Number</label> <br>
-          <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9]"/> <br>
+            <div>
+
+                <img src="./img/logo.svg" width="100" height="100">
+
+            </div>
+            <h3>Welcome to CPanel</h3>
+            </p>
+            <p>Verify yout phone number</p>
+            <form id="verifyPhone" class="m-t" role="form" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <input type="text" id="code" name="code" class="form-control" placeholder="code" required>
+                </div>
+                <div id="recaptcha-container"></div>
+                <!-- custom-alert -->
+                <div class="alert alert-danger custom-alert" style="display: none"></div>
+
+                <button type="submit" class="ladda-button ladda-button-demo btn btn-primary block full-width m-b" data-style="zoom-in">VERIFY</button>
+            </form>
+            <p class="m-t"> <small>apcouleddjellal.dz &copy; 2022</small> </p>
         </div>
-        <div>
-          <label for="code">Code</label> <br>
-          <input type="text" id="code" name="code"/> <br>
-        </div>
-        <div id="recaptcha-container"></div>
-        <button id="signInWithPhone">Login</button>
-        <button id="getCode">Get Code</button>  
-      </fieldset>
-    </section>
+
+    </div>
 
     <!-- Mainly scripts -->
     <script src="https://apcouleddjellal.dz/js/jquery-3.1.1.min.js"></script>
@@ -63,8 +102,63 @@
     <script src="https://apcouleddjellal.dz/js/plugins/wow/wow.min.js"></script>
 
   
-    <script src="js/firebase.js"></script>
-    <script src="js/dash.js"></script>
+    <script defer src="js/firebase.js"></script>
+    <script defer src="js/verifyPhone.js"></script>
+
+    <script type="module">
+
+
+      $(document).ready(() => {
+
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
+            // User is signed in, see docs for a list of available properties
+            // https://firebase.google.com/docs/reference/js/firebase.User
+            var uid = user.uid;
+            // ...
+            console.log(`user ${uid} is logged`);
+
+          } else {
+            // User is signed out
+            // ...
+          }
+        });
+
+      });
+
+      var sentCodeId = null;
+
+      async function getCode() {
+        sentCodeId = await sendVerificationCode($('#phoneNumber').val());
+        console.log('code is: ', sentCodeId);
+      }
+
+      async function signIn() {
+
+        if (sentCodeId == null) {
+          console.log('sent code null');
+          return;
+        }
+
+        const success = await signInWithPhone(sentCodeId, $('#code').val());
+        if (success) {
+          console.log('OK');
+        }else {
+          console.log('FAILED');
+        }
+      }
+
+      $('#verifyPhone').on('submit', function (e) {
+
+        if (!e.isDefaultPrevented()) { 
+
+            e.preventDefault();
+            signIn()
+        }
+
+      });
+
+    </script>
 
   </body>
 </html>

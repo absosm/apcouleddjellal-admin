@@ -259,20 +259,5 @@
 
   <script defer src="js/firebase.js"></script>
   <script defer src="js/dash.js"></script>
-
-  <script>
-    $('#profile').click(()=>{
-      axios.post(`${API_URL}/register`, {
-        credentials:{
-          displayName: "ossama40",
-          email: "ossama40@gmail.com", 
-          phoneNumber: "+213550200150",
-          password: "19121989",
-        }
-      }).then(res => {
-        console.log(res.data);
-      });
-    })
-  </script>
 </body>
 </html>

@@ -32,7 +32,21 @@ $(document).ready(function () {
       
       // User is signed out
       // ...
-      window.location.href = './login.html';
+      // window.location.href = './login.html';
+      console.log(message.errors);
+
+      swal({
+        title: "Error!",
+        text: "Session Expired!, Login Now?",
+        type: "error",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, login!",
+        closeOnConfirm: false
+      }, function () {
+        window.location.href = 'login.html';
+      });
+
     }
   });
 });

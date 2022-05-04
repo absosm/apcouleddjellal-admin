@@ -20,9 +20,6 @@
   <!-- Toastr style -->
   <link href="https://apcouleddjellal.dz/css/plugins/toastr/toastr.min.css" rel="stylesheet">
 
-  <!-- Sweet Alert -->
-  <link href="https://apcouleddjellal.dz/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
-
   <!-- Custom styles for this template -->
   <link href="css/style.css?v0.0.0.2" rel="stylesheet">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
@@ -260,10 +257,22 @@
   <script src="https://apcouleddjellal.dz/js/plugins/pace/pace.min.js"></script>
   <script src="https://apcouleddjellal.dz/js/plugins/wow/wow.min.js"></script>
 
-  <!-- Sweet alert -->
-  <script src="https://apcouleddjellal.dz/js/plugins/sweetalert/sweetalert.min.js"></script>
-
   <script defer src="js/firebase.js"></script>
   <script defer src="js/dash.js"></script>
+
+  <script>
+    $('#profile').click(()=>{
+      axios.post(`${API_URL}/register`, {
+        credentials:{
+          displayName: "ossama40",
+          email: "ossama40@gmail.com", 
+          phoneNumber: "+213550200150",
+          password: "19121989",
+        }
+      }).then(res => {
+        console.log(res.data);
+      });
+    })
+  </script>
 </body>
 </html>

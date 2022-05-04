@@ -43,8 +43,8 @@
     <!-- <script defer src="/__/firebase/init.js?useEmulator=true"></script> -->
     <script defer src="/__/firebase/init.js"></script>
 
-    <script defer src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js" defer ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js" defer ></script>
 </head>
 <body class="gray-bg">
 
@@ -117,12 +117,10 @@
 var l = $( '.ladda-button-demo' ).ladda();
 
 $(document).ready(function() {
-
     axios.defaults.withCredentials = true;
-
     axios.post(`${API_URL}/session`).then(res => {
         const message = res.data;
-        if (message.success) {
+        if (message.success && message.result) {
             window.location.href = './';
         }else {
             $('.fullbox-loading').remove('.sk-loading');
@@ -145,18 +143,12 @@ function signInWithEmailPassword() {
                     Accept: "application/json",
                     "Content-Type": "application/json"
                 } 
-            }).then(res=>{
-                l.ladda('stop');
-                
-                var message = res.data;
-                if (message.success) {
-                    window.location.href = './';
-                }else {
-                    console.log(message.errors);
-                }
-
-                //firebase.auth().signOut();
             });
+        }).then( () => {
+            l.ladda('stop');
+            return firebase.auth().signOut();
+        }).then( () => {
+            window.location.href = './';
         });
     }).catch((error) => {
         var errorCode = error.code;

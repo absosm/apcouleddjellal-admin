@@ -179,8 +179,9 @@ function signUpWithEmailPassword() {
             });
 
         }else {
-            var error = message.error;
-            console.log(error);
+            var error = message.errors;
+            $('.custom-alert').html(message.errors[0].message);
+            $('.custom-alert').fadeIn();
         }
 
         l.ladda('stop');

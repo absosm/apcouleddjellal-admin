@@ -17,9 +17,11 @@ $(document).ready(function () {
       const name = user.name;
       const picture = user.picture;
       const email_verified = user.email_verified;
+      const phone_number = user.phone_number;
 
       $('#photo_url').attr('src', picture);
       $('#display_name').html(name);
+      $('#phoneNumber').html(phone_number);
 
       if (!email_verified) {
         toastr.warning('email not verified, please check your mail box and verify.','Email Verification');

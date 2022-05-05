@@ -144,7 +144,6 @@ function signInWithEmailPassword() {
                     "Content-Type": "application/json"
                 } 
             }).then(res=>{
-
                 var message = res.data;
                 if (message.success) {
                     window.location.href = './';
@@ -152,7 +151,7 @@ function signInWithEmailPassword() {
                     console.log(message.errors);
                 }
                 l.ladda('stop');
-                //return firebase.auth().signOut();
+                return firebase.auth().signOut();
             });
         });
     }).catch((error) => {

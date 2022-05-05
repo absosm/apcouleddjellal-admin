@@ -35,6 +35,7 @@ $(document).ready(function () {
       // User is signed out
       // ...
       window.location.href = './login.html';
+      // console.log(message.errors);
     }
   });
 });

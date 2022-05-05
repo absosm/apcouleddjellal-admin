@@ -143,12 +143,17 @@ function signInWithEmailPassword() {
                     Accept: "application/json",
                     "Content-Type": "application/json"
                 } 
+            }).then(res=>{
+
+                var message = res.data;
+                if (message.success) {
+                    window.location.href = './';
+                }else {
+                    console.log(message.errors);
+                }
+                l.ladda('stop');
+                //return firebase.auth().signOut();
             });
-        }).then( () => {
-            l.ladda('stop');
-            return firebase.auth().signOut();
-        }).then( () => {
-            window.location.href = './';
         });
     }).catch((error) => {
         var errorCode = error.code;

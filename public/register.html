@@ -159,32 +159,37 @@ function signUpWithEmailPassword() {
                 user.sendEmailVerification().then(() => {
                     // Email verification sent!
                     // ...
-                    swal({
-                        title: "Successful!",
-                        text: "Email verification sent!, Login Now?",
-                        type: "success",
-                        showCancelButton: true,
-                        confirmButtonColor: "#DD6B55",
-                        confirmButtonText: "Yes, login!",
-                        closeOnConfirm: false
-                    }, function () {
-                        window.location.href = 'verifyPhone.html';
-                    });
+                    firebase.auth().signOut().then(()=>{
 
+                        l.ladda('stop');
+
+                        swal({
+                            title: "Successful!",
+                            text: "Email verification sent!, Login Now?",
+                            type: "success",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "Yes, login!",
+                            closeOnConfirm: false
+                        }, function () {
+                            window.location.href = 'login.html';
+                        });
+                    });
                 }).catch((error) => {
+                    l.ladda('stop');
                     console.log(error.message);
                 });
             }).catch((error) => {
+                l.ladda('stop');
                 console.log(error.message);
             });
 
         }else {
-            var error = message.errors;
-            $('.custom-alert').html(message.errors[0].message);
+            const error = message.errors[0];
+            l.ladda('stop');
+            $('.custom-alert').html(error.message);
             $('.custom-alert').fadeIn();
         }
-
-        l.ladda('stop');
     });
 }
 

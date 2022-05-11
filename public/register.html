@@ -177,17 +177,17 @@ function signUpWithEmailPassword() {
                     });
                 }).catch((error) => {
                     l.ladda('stop');
-                    console.log(error.message);
+                    console.log('sendEmailVerification',error.message);
                 });
             }).catch((error) => {
                 l.ladda('stop');
-                console.log(error.message);
+                console.log('signInWithEmailAndPassword',error.message);
             });
 
         }else {
             const error = message.errors[0];
             l.ladda('stop');
-            $('.custom-alert').html(error.message);
+            $('.custom-alert').html('axios',error.message);
             $('.custom-alert').fadeIn();
         }
     });

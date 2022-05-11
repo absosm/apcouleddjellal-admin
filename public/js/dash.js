@@ -14,19 +14,20 @@ $(document).ready(function () {
     if (message.success) {
 
       user = message.result;
-      const name = user.name;
-      const picture = user.picture;
-      const email_verified = user.email_verified;
-      const phone_number = user.phone_number;
 
-      $('#photo_url').attr('src', picture);
-      $('#display_name').html(name);
-      $('#phoneNumber').html(phone_number);
-
-      if (!email_verified) {
-        toastr.warning('email not verified, please check your mail box and verify.','Email Verification');
+      if (!user['phoneVerified']) {
+        window.location.href = '/verifyPhone.html';
+        return;
       }
 
+      $('#photo_url').attr('src', user['photoURL']);
+      $('#display_name').html(user['displayName']);
+      $('#phoneNumber').html(user['phoneNumber']);
+
+      if (!user['emailVerified']) {
+        toastr.warning('email not verified, please check your mail box and verify.','Email Verification');
+      }
+      
       init_side_menu();
 
       $('.fullbox-loading').remove('.sk-loading');

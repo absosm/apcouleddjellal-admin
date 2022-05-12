@@ -1,12 +1,21 @@
-// window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+var sentCodeId = null, phoneNumber=null;
+axios.defaults.withCredentials = true;
 
+// window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
 window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
     'size': 'normal',
     'callback': (response) => {
         // reCAPTCHA solved, allow signInWithPhoneNumber.
         // ...
-        console.log('send verification code');
-        //sendVerificationCode('+213550200150');
+        if (phoneNumber == null) {
+            console.log('phone number is null');
+        }else {
+            sendVerificationCode(phoneNumber).then(code=>{
+                sentCodeId = code;
+                console.log('sent code is:', sentCodeId);
+                $('#recaptcha-container').hide();
+            })
+        }
     },
     'expired-callback': () => {
         // Response expired. Ask user to solve reCAPTCHA again.
@@ -23,8 +32,7 @@ function sendVerificationCode(phoneNumber) {
         const appVerifier = window.recaptchaVerifier;
         auth.signInWithPhoneNumber(phoneNumber, appVerifier)
         .then((confirmationResult) => {
-            const sentCodeId = confirmationResult.verificationId;
-            resolve(sentCodeId);
+            resolve(confirmationResult.verificationId);
         })
     });
 }
@@ -34,9 +42,59 @@ function signInWithPhone(sentCodeId, code){
     return new Promise(resolve => {
         const credential = firebase.auth.PhoneAuthProvider.credential(sentCodeId, code);
         auth.signInWithCredential(credential).then((userCredential) => {
+
+            userCredential.getIdToken().then((idToken) => {
+
+                axios.post(`${API_URL}/verify_phone`, 
+                    JSON.stringify({ idToken }), 
+                    {headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json"
+                    } 
+                }).then(res=>{
+                    var message = res.data;
+                    if (message.success) {
+                        window.location.href = './';
+                    }else {
+                        console.log(message.errors);
+                    }
+                    firebase.auth().signOut();
+                });
+            });
+
             resolve(true);
         }).catch(error => {
             resolve(false);
         });
     });
 }
+
+$(document).ready(() => {
+
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        var uid = user.uid;
+        // ...
+        console.log(`user ${uid} is logged`);
+
+        } else {
+        // User is signed out
+        // ...
+        }
+    });
+
+    axios.post(`${API_URL}/session`).then(res => {
+        const message = res.data;
+        if (message.success) {
+            user = message.result;
+            phoneNumber = user.phoneNumber;
+            console.log('your phone number is:', phoneNumber);
+            $('.fullbox-loading').remove('.sk-loading');
+        }else {
+            console.log('session expired');
+            window.location.href = 'login.html'
+        }
+    });
+});

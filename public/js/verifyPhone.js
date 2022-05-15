@@ -43,8 +43,7 @@ function signInWithPhone(sentCodeId, code){
         const credential = firebase.auth.PhoneAuthProvider.credential(sentCodeId, code);
         auth.signInWithCredential(credential).then((userCredential) => {
 
-            userCredential.getIdToken().then((idToken) => {
-
+            auth.currentUser.getIdToken().then(function(idToken) {
                 axios.post(`${API_URL}/verify_phone`, 
                     JSON.stringify({ idToken }), 
                     {headers: {
@@ -56,14 +55,17 @@ function signInWithPhone(sentCodeId, code){
                     if (message.success) {
                         window.location.href = './';
                     }else {
-                        console.log(message.errors);
+                        console.log('error:',message.errors);
                     }
                     firebase.auth().signOut();
                 });
+            }).catch(error=>{
+                console.log('getIdToken()',error);
             });
 
             resolve(true);
         }).catch(error => {
+            console.log(error);
             resolve(false);
         });
     });
@@ -89,6 +91,11 @@ $(document).ready(() => {
         const message = res.data;
         if (message.success) {
             user = message.result;
+            console.log(user);
+            if (user.phoneVerified) {
+                window.location.href = './';
+                return;
+            }
             phoneNumber = user.phoneNumber;
             console.log('your phone number is:', phoneNumber);
             $('.fullbox-loading').remove('.sk-loading');

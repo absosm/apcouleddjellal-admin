@@ -187,7 +187,7 @@ function signUpWithEmailPassword() {
         }else {
             const error = message.errors[0];
             l.ladda('stop');
-            $('.custom-alert').html('axios',error.message);
+            $('.custom-alert').html(error.message);
             $('.custom-alert').fadeIn();
         }
     });

@@ -123,7 +123,9 @@
             l.ladda( 'start' );
             
             if (sentCodeId == null) {
-              console.log('sent code null');
+              $('.custom-alert').html(`click i'm not robot before verify`);
+              $('.custom-alert').fadeIn();
+              l.ladda( 'stop' );
               return;
             }
 
@@ -131,12 +133,17 @@
               if (success) {
                 console.log('OK');
               }else {
-                console.log('FAILED');
+                $('.custom-alert').html(`Wrong verification code`);
+                $('.custom-alert').fadeIn();
               }
               l.ladda( 'stop' );
             });
         }
 
+      });
+
+      $('input').focus(function(){
+          $('.custom-alert').fadeOut();
       });
 
     </script>

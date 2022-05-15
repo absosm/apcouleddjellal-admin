@@ -91,13 +91,11 @@ $(document).ready(() => {
         const message = res.data;
         if (message.success) {
             user = message.result;
-            console.log(user);
             if (user.phoneVerified) {
                 window.location.href = './';
                 return;
             }
             phoneNumber = user.phoneNumber;
-            console.log('your phone number is:', phoneNumber);
             $('.fullbox-loading').remove('.sk-loading');
         }else {
             console.log('session expired');

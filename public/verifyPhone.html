@@ -101,17 +101,26 @@
     <script src="https://apcouleddjellal.dz/js/plugins/pace/pace.min.js"></script>
     <script src="https://apcouleddjellal.dz/js/plugins/wow/wow.min.js"></script>
 
+    <!-- Ladda -->
+    <script src="https://apcouleddjellal.dz/js/plugins/ladda/spin.min.js"></script>
+    <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.min.js"></script>
+    <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.jquery.min.js"></script>
+
   
     <script defer src="js/firebase.js"></script>
     <script defer src="js/verifyPhone.js"></script>
 
     <script type="module">
 
+      var l = $( '.ladda-button-demo' ).ladda();
+
       $('#verifyPhone').on('submit', function (e) {
 
         if (!e.isDefaultPrevented()) {
 
             e.preventDefault();
+
+            l.ladda( 'start' );
             
             if (sentCodeId == null) {
               console.log('sent code null');
@@ -124,6 +133,7 @@
               }else {
                 console.log('FAILED');
               }
+              l.ladda( 'stop' );
             });
         }
 

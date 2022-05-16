@@ -146,7 +146,9 @@ function signInWithEmailPassword() {
             }).then(res=>{
                 var message = res.data;
                 if (message.success) {
+
                     var user = message.result;
+
                     if (user.phoneVerified) {
                         window.location.href = './';
                     }else {

@@ -326,9 +326,6 @@
   <script defer src="js/dash.js"></script>
   
   <script type="module">
-
-    // Initialize Firebase
-    var database = firebase.database();
     // User is signed in, see docs for a list of available properties
     // https://firebase.google.com/docs/reference/js/firebase.User
     const posts = database.ref('posts');
@@ -355,9 +352,9 @@
     function add_post(post) {
       var tbody = document.querySelector("tbody");
       var template = document.querySelector('#post_template').content.cloneNode(true);
-      template.querySelector('.post-title').querySelector('a').href = 'post.html#id=' + post.url;
-      template.querySelector('.post-actions').querySelector('#view').href = 'post.html#id=' + post.url;
-      template.querySelector('.post-actions').querySelector('#delete').href = '#id=' + post.url;
+      template.querySelector('.post-title').querySelector('a').href = 'post.html#id=' + post.id;
+      template.querySelector('.post-actions').querySelector('#view').href = 'post.html#id=' + post.id;
+      template.querySelector('.post-actions').querySelector('#delete').href = '#id=' + post.id;
       template.querySelector('.post-actions').querySelector('#delete').onclick = function() { 
         const hash = slice_hash($(this).attr("href"));
         if (hash != null) {
@@ -381,20 +378,22 @@
       tbody.appendChild(template);
     }
 
+    posts.on('value', function(snapshot) {
+      clear_posts();
+      snapshot.forEach(function(childSnapshot) {
+        var posts_byid = childSnapshot.val();
+        $.each(posts_byid, function(i, item) {
+            var post = posts_byid[i];
+            if (post != null)
+              add_post(post);
+        });
+      });
+    });
+
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
 
-        posts.on('value', function(snapshot) {
-          clear_posts();
-          snapshot.forEach(function(childSnapshot) {
-            var posts_byid = childSnapshot.val();
-            $.each(posts_byid, function(i, item) {
-                var post = posts_byid[i];
-                if (post != null)
-                  add_post(post);
-            });
-          });
-        });
+
       } else {
         // User is signed out
         // ...

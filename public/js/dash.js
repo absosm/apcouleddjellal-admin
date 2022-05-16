@@ -15,8 +15,13 @@ $(document).ready(function () {
 
       user = message.result;
 
-      if (!user['phoneVerified']) {
+      if (!user.phoneVerified) {
         window.location.href = '/verifyPhone.html';
+        return;
+      }
+
+      if (!user.superuser) {
+        window.location.href = 'https://apcouleddjellal.dz';
         return;
       }
 

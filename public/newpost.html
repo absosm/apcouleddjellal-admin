@@ -239,9 +239,6 @@
                 <div class="form-group row"><label class="col-sm-2 col-form-label">Title:</label>
                   <div class="col-sm-10"><input type="text" id="post_subject" class="form-control" placeholder="write title here."></div>
                 </div>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">Date post:</label>
-                  <div class="col-sm-10"><input id="post_date" type="text" class="form-control" value=""></div>
-                </div>
               </form>
             </div>
             <div class="post-text h-200">
@@ -299,30 +296,25 @@
   
   <script type="module">
 
-    // Initialize Firebase
-    var database = firebase.database();
-    const rootRef = database.ref('posts');
-
-    function writePost(userId, subject, date, content) {
-      var postId = rootRef.push().key;
-      rootRef.child(userId).child(postId).set ({
-        subject: subject,
-        date: date,
-        content: content,
-        url: postId
-      }, (error) => {
-        if (error) {
-          // The write failed...
-          alert(error);
-        } else {
-          // Data saved successfully!
-          window.location.href = 'posts.html';
+    function writePost(subject, content) {
+      axios.post(`${API_URL}/write_post`,{
+        post:{
+          subject: subject,
+          content: content
         }
+      }).then(res => {
+        const success = res.data;
+        if (success) {
+          window.location.href = "posts.html";
+        }else {
+          const error = res.data.errors[0];
+          console.log(error.message);
+        }
+        
       });
     }
 
     $(document).ready(function(){
-
       var today = new Date();
       var dd = String(today.getDate()).padStart(2, '0');
       var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -331,39 +323,29 @@
 
       $('#post_date').val(today);
       $('.summernote').summernote();
-
     });
 
     $('#send_post').click(function (e) {
-      
       e.preventDefault();
-      
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/firebase.User
-
-          var post_subject = $('#post_subject').val();
-          var post_date = $('#post_date').val();
-          var post_content = $('.summernote').summernote('code');
-
-          writePost(user.uid, post_subject, post_date, post_content);
-
-        } else {
-          // User is signed out
-          // ...
-          window.location.href='login.html';
-        }
-      });
-
+      var post_subject = $('#post_subject').val();
+      var post_content = $('.summernote').summernote('code');
+      writePost(post_subject, post_content);
     });
 
     $('#discard_post').click(function (e) {
-      
       e.preventDefault();
-
       window.location.href='posts.html';
+    });
 
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+      } else {
+        // User is signed out
+        // ...
+        // window.location.href='login.html';
+      }
     });
 
   </script>

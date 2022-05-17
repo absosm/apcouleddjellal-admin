@@ -330,21 +330,39 @@
     // https://firebase.google.com/docs/reference/js/firebase.User
     const posts = database.ref('posts');
 
+    function formatDate(date) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+
+      if (month.length < 2) 
+          month = '0' + month;
+      if (day.length < 2) 
+          day = '0' + day;
+
+      return [day, month, year].join('/');
+    }
+
     function clear_posts() {
       var tbody = document.querySelector("tbody");
       tbody.innerHTML = '';
     }
 
-    function remove_post(id) {
-      const uid = firebase.auth().currentUser.uid;
-      posts.child(uid).child(id).set (null, (error) => {
-        if (error) {
-          // The write failed...
-          alert(error);
-          swal("Error!", error, "error");
-        } else {
-          // Data delete successfully!
+    function delete_post(id) {
+
+      axios.post(`${API_URL}/delete_post`,{
+        post:{
+          id: id
+        }
+      }).then(res => {
+        const success = res.data;
+        if (success) {
           swal("Deleted!", "Your post has been deleted.", "success");
+        }else {
+          const error = res.data.errors[0];
+          swal("Error!", error, "error");
+          console.log(error.message);
         }
       });
     }
@@ -369,12 +387,12 @@
             confirmButtonText: "Yes, delete it!",
             closeOnConfirm: false
           }, function () {
-            remove_post(id);
+            delete_post(id);
           });
         }
       }
       template.querySelector('.post-title').querySelector('a').textContent = post.subject;
-      template.querySelector('.post-title').querySelector('small').textContent = 'Created ' + post.date;
+      template.querySelector('.post-title').querySelector('small').textContent = 'Created ' + formatDate(post.created);
       tbody.appendChild(template);
     }
 

@@ -132,6 +132,20 @@
 
     <script type="module">
 
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) 
+                month = '0' + month;
+            if (day.length < 2) 
+                day = '0' + day;
+
+            return [year, month, day].join('/');
+        }
+
         function slice_hash(hash_url) {
             var bl = hash_url.slice(1).split('?');
             var hash = {};
@@ -146,45 +160,24 @@
         const hash_url = slice_hash(window.location.hash);
 
         if (hash_url != null) {
-
             var database = firebase.database();
             const rootRef = database.ref('posts');
             const id = hash_url['id'];
-
-            rootRef.orderByChild(id).limitToLast(1).once('value')
-            .then((querySnapshot) => {
-
-                //console.log(querySnapshot.val());
-
-                if (!querySnapshot.numChildren()) { // handle rare no-results case
-                    throw new Error('expected at least one result');
-                    console.log('expected at least one result');
-                }
-                let dataSnapshot; 
-                querySnapshot.forEach((snap) => dataSnapshot = snap); // get the snapshot we want out of the query's results list
-
-                if (!dataSnapshot.exists()) { // value may be null, meaning idToFind doesn't exist
-                    throw new Error(`Entry ${id} not found.`);
-                    console.log(`Entry ${postid} not found`);
-                }
-
-                var posts_byid = dataSnapshot.val();
-                console.log(posts_byid);
-                var post = posts_byid[id];
+            rootRef.child(id).once('value').then((snapshot) => {
+                var post = snapshot.val();
                 if (post != null) {
                     $('.subject-post').html(post.subject);
                     $('#content-post').html(post.content);
-                    $('#date-post').html(post.date);
+                    $('#date-post').html(formatDate(post.created));
                     $('.fullbox-loading').remove('.sk-loading');
                     document.title = `بلدية أولاد جلال | منشور:   ${post.subject}`
                 }else {
-                    
+                    console.log("post not found.");
                 }
             })
             .catch((error) => {
                 console.log("Unexpected error:", error);
             });
-
         }
 
 

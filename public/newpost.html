@@ -19,6 +19,9 @@
 
   <link href="https://apcouleddjellal.dz/css/plugins/summernote/summernote-bs4.css" rel="stylesheet">
 
+  <!-- Ladda style -->
+  <link href="https://apcouleddjellal.dz/css/plugins/ladda/ladda-themeless.min.css" rel="stylesheet">  
+
   <!-- Toastr style -->
   <link href="https://apcouleddjellal.dz/css/plugins/toastr/toastr.min.css" rel="stylesheet">
 
@@ -251,7 +254,7 @@
               <div class="clearfix"></div>
             </div>
             <div class="post-body text-right tooltip-demo">
-              <a href="#" id="send_post" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Send"><i class="fa fa-reply"></i> Send</a>
+              <a href="#" id="send_post" class="ladda-button ladda-button-demo btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Send"><i class="fa fa-reply"></i> Send</a>
               <a href="#" id="discard_post" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Discard post"><i class="fa fa-times"></i> Discard</a>
             </div>
             <div class="clearfix"></div>
@@ -284,6 +287,11 @@
   <script src="https://apcouleddjellal.dz/js/plugins/pace/pace.min.js"></script>
   <script src="https://apcouleddjellal.dz/js/plugins/wow/wow.min.js"></script>
 
+  <!-- Ladda -->
+  <script src="https://apcouleddjellal.dz/js/plugins/ladda/spin.min.js"></script>
+  <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.min.js"></script>
+  <script src="https://apcouleddjellal.dz/js/plugins/ladda/ladda.jquery.min.js"></script>
+
   <!-- Toastr script -->
   <script src="https://apcouleddjellal.dz/js/plugins/toastr/toastr.min.js"></script>
 
@@ -296,13 +304,17 @@
   
   <script type="module">
 
+    var l = $( '.ladda-button-demo' ).ladda();
+
     function writePost(subject, content) {
+      l.ladda( 'start' );
       axios.post(`${API_URL}/write_post`,{
         post:{
           subject: subject,
           content: content
         }
       }).then(res => {
+        l.ladda( 'stop' );
         const success = res.data;
         if (success) {
           window.location.href = "posts.html";
@@ -310,7 +322,6 @@
           const error = res.data.errors[0];
           console.log(error.message);
         }
-        
       });
     }
 

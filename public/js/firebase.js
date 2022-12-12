@@ -1,5 +1,5 @@
 // const API_URL = 'http://localhost:5000';
-const API_URL = 'https://api.apcouleddjellal.dz';
+const API_URL = 'https://main.apcouleddjellal.dz';
 const auth = firebase.auth();
 // Initialize Firebase
 var database = firebase.database();
